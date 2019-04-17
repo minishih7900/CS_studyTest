@@ -5,23 +5,40 @@
     }
 
     <h2>查詢號碼</h2>
-    @using (Html.BeginForm("QueryNumber", "Home", FormMethod.Post, new { @role = "form", @class = "" }))
-    {
-        <div class="form-group">
-            <label for="StartDate"><b>開始日期</b></label>
-            <input type="text" class="form-control" placeholder="請輸入開始日期 格式如：20190101" name="StartDate" pattern="\d{8}" required oninput="value=value.replace(/[^\d]/g,'')" >
-        </div>
-        <div class="form-group">
-            <label for="StartDate"><b>結束日期</b></label>
-            <input type="text" class="form-control" placeholder="請輸入結束日期 格式如：20190101" name="EndDate" pattern="\d{8}" required oninput="value=value.replace(/[^\d]/g,'')">
-        </div>
+<div class="col-md-12" style="">
+    <div class="col-md-4" style="">
+        @using (Html.BeginForm("QueryNumber", "Home", FormMethod.Post, new { @role = "form", @class = "" }))
+        {
+            <div class="form-group">
+                <label for="StartDate"><b>開始日期</b></label>
+                <input type="text" class="form-control" placeholder="請輸入開始日期 格式如：20190101" name="StartDate" pattern="\d{8}" required oninput="value=value.replace(/[^\d]/g,'')">
+            </div>
+            <div class="form-group">
+                <label for="StartDate"><b>結束日期</b></label>
+                <input type="text" class="form-control" placeholder="請輸入結束日期 格式如：20190101" name="EndDate" pattern="\d{8}" required oninput="value=value.replace(/[^\d]/g,'')">
+            </div>
+            <br />
+            <button type="submit" class="signupbtn" onclick="validitymess()">查詢</button>
+            <br />
+        }
+    </div>
+    <div class="col-md-4" style="">
+        <a href="@Url.Action("QuerySelectNumberCount", "Home")" class="btn btn-warning"><span>最合數字</span></a>
+        <div></div>
+        <div></div>
         <br />
-        <button type="submit" class="signupbtn" onclick="validitymess()">查詢</button>
         <br />
-    }
+    </div>
+</div>
+<div class="col-lg-11" style="">
     <br />
     @ViewBag.Message
     <br />
+</div>
+
+
+
+    
 @if (Model != null)
 {
     <table id="numberList" class="table .table-bordered">

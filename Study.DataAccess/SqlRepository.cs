@@ -20,6 +20,33 @@ namespace Study.DataAccess
            @password)";
             return _dbDapper.NonQuerySQL(sql, mm) > 0;
         }
+        public List<LotNumber> GetSelectLotNumber(string selectnum, string StartDate, string EndDate, string StartPeriod, string EndPeriod)
+        {
+            var sqlTemp = "";
+            var sql = @"
+select * from [dbo].[開獎記錄表]
+where (號碼1=@num or 號碼2=@num or  號碼3=@num or 號碼4=@num or 號碼4=@num) {0}
+";
+            if (!string.IsNullOrEmpty(StartDate) && !string.IsNullOrEmpty(EndDate))
+            {
+                sqlTemp= sqlTemp + "and (開獎日期 between @startdate and @enddate) ";
+            }
+            if (StartPeriod !="00000000" && EndPeriod != "00000000")
+            {
+                sqlTemp = sqlTemp + "and 期數 between @startperiod and @endperiod ";
+            }
+            sql = string.Format(sql, sqlTemp);
+
+            var param = new Dictionary<string, object>();
+            param.Add("num", selectnum);
+            param.Add("startdate", StartDate);
+            param.Add("enddate", EndDate);
+            param.Add("startperiod", StartPeriod);
+            param.Add("endperiod", EndPeriod);
+
+            return _dbDapper.QueryList<LotNumber>(sql, param);
+        }
+        
         public List<LotNumber> GetLotNumber(string startDate ,string endDate)
         {
             var sql = @"

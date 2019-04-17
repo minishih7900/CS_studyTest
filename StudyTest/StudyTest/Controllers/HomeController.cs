@@ -84,16 +84,57 @@ namespace WebApplication1.Controllers
         }
         public ActionResult TestCode()
         {
-            List<int> intlist = new List<int> { 1, 2, 3 };
-            foreach (var item in intlist)
-            {
-                Debug.WriteLine(intlist.IndexOf(item));
-            }
+            
+           
+           
             
             return RedirectToAction("Tool", "Home");
         }
+        [HttpPost]
+        public string ranNumber(string inputNumer)
+        {
+            string guid = Guid.NewGuid().ToString(inputNumer);
+            inputNumer = guid.ToString().Replace("-", "");
+            
+            return inputNumer;
+        }
+        #region 合數字
+        [HttpGet]
+        public ActionResult QuerySelectNumberCount()
+        {
+            SelectLotNumber model = new SelectLotNumber();
+            model.selectNumberCountDarry = new int[40];
+            model.selectNumberCountListOrderBy = new Dictionary<int?, int?>();
+            return View(model);
+        }
+        [HttpPost]
+        public ActionResult QuerySelectNumberCount(string selectnum,string StartDate,string EndDate,string StartPeriod,string EndPeriod)
+        {
+            SelectLotNumber model = new SelectLotNumber();
+            List<LotNumber> numList = new List<LotNumber>();
+            Dictionary<int?, int?> numDic = new Dictionary<int?, int?>();
+            numList = _homeService.GetNumberListServices(selectnum,StartDate,EndDate,StartPeriod,EndPeriod);
+            model.selectNumberCountDarry = new int[40];
+            foreach (var item in numList)
+            {
+                model.selectNumberCountDarry[int.Parse(item.號碼1)] = model.selectNumberCountDarry[int.Parse(item.號碼1)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼2)] = model.selectNumberCountDarry[int.Parse(item.號碼2)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼3)] = model.selectNumberCountDarry[int.Parse(item.號碼3)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼4)] = model.selectNumberCountDarry[int.Parse(item.號碼4)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼5)] = model.selectNumberCountDarry[int.Parse(item.號碼5)] + 1;
+            }
+            for (int i = 1; i < 40; i++)
+            {
+                numDic.Add(i, model.selectNumberCountDarry[i]);
+            }
+            model.selectNumberCountListOrderBy = numDic.OrderByDescending(d => d.Value).ToDictionary(dkey => dkey.Key, dvalue => dvalue.Value);
+            ViewBag.Message = "查詢期間為：" + numList.Select(d => d.開獎日期).Min() + "~" + numList.Select(d => d.開獎日期).Max();
+            ViewBag.Data = numList.Count;
 
-        
+            return View(model);
+        }
+
+        #endregion
 
         #region 查詢號碼
         [HttpGet]

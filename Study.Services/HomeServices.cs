@@ -13,6 +13,12 @@ namespace Study.Services
     {
         public SqlRepository _sqlRepository = new SqlRepository();
 
+        public List<LotNumber> GetNumberListServices(string selectnum ,string StartDate,string EndDate,string StartPeriod,string EndPeriod)
+        {
+            StartPeriod = StartPeriod.PadLeft(8, '0');
+            EndPeriod = EndPeriod.PadLeft(8, '0');
+            return _sqlRepository.GetSelectLotNumber(selectnum,StartDate,EndDate,StartPeriod,EndPeriod);
+        }
         public List<LotNumber> GetNumberServices(string StartDate ,string EndDate)
         {
             return _sqlRepository.GetLotNumber(StartDate, EndDate);

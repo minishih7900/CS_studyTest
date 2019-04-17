@@ -25,4 +25,10 @@ namespace Study.Models.Models
         [Required]
         public string 號碼5 { get; set; }
     }
+    public class SelectLotNumber
+    {
+        public int[] selectNumberCountDarry { get; set; }
+        public Dictionary<int?,int?> selectNumberCountListOrderBy { get; set; }
+
+    }
 }
