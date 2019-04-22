@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Study.DataAccess;
 using Study.Models.Models;
 using System.Transactions;
+using System.Globalization;
 
 namespace Study.Services
 {
@@ -36,14 +37,12 @@ namespace Study.Services
         {
             bool success = false;
             List<string> inputNum = new List<string> { data.號碼1, data.號碼2, data.號碼3, data.號碼4, data.號碼5 };
-            累計記錄表 countReport =_sqlRepository.GetCountNumber();
-            foreach (var item in inputNum)
-            {
-               
-            }
+            
             using (var scope = new TransactionScope())
             {
-                success = _sqlRepository.InputLotNumber(data);
+                success = _sqlRepository.InputLotNumber(data) && 
+                          _sqlRepository.InsertCopyNumber(data.開獎日期) &&
+                          _sqlRepository.UpdateCopyNumber(data);
                 if (success)
                     scope.Complete();
             }

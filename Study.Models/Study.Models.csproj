@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\CarData.cs" />
-    <Compile Include="Models\累計記錄表.cs" />
+    <Compile Include="Models\TwLot59_StoredCount.cs" />
     <Compile Include="Models\ExciseFreeApply.cs" />
     <Compile Include="Models\LotNumber.cs" />
     <Compile Include="Models\member.cs" />

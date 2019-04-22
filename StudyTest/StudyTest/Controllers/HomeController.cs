@@ -54,7 +54,7 @@ namespace WebApplication1.Controllers
         {
             var MR = new report();
             List<LotNumber> mb = new List<LotNumber>();
-            mb = _homeService._sqlRepository.GetLotNumber("20190101", "20190102");
+            mb = _homeService._sqlRepository.GetLotNumber("20190101", "20190131");
             string downloadPath = MR.OutputWord(mb);
             byte[] fileBytes = System.IO.File.ReadAllBytes(downloadPath);
             string fileName = Path.GetFileName(downloadPath);
@@ -98,7 +98,7 @@ namespace WebApplication1.Controllers
             
             return inputNumer;
         }
-        #region 合數字
+        #region 最合數字
         [HttpGet]
         public ActionResult QuerySelectNumberCount()
         {
@@ -112,28 +112,34 @@ namespace WebApplication1.Controllers
         {
             SelectLotNumber model = new SelectLotNumber();
             List<LotNumber> numList = new List<LotNumber>();
-            Dictionary<int?, int?> numDic = new Dictionary<int?, int?>();
             numList = _homeService.GetNumberListServices(selectnum,StartDate,EndDate,StartPeriod,EndPeriod);
-            model.selectNumberCountDarry = new int[40];
-            foreach (var item in numList)
-            {
-                model.selectNumberCountDarry[int.Parse(item.號碼1)] = model.selectNumberCountDarry[int.Parse(item.號碼1)] + 1;
-                model.selectNumberCountDarry[int.Parse(item.號碼2)] = model.selectNumberCountDarry[int.Parse(item.號碼2)] + 1;
-                model.selectNumberCountDarry[int.Parse(item.號碼3)] = model.selectNumberCountDarry[int.Parse(item.號碼3)] + 1;
-                model.selectNumberCountDarry[int.Parse(item.號碼4)] = model.selectNumberCountDarry[int.Parse(item.號碼4)] + 1;
-                model.selectNumberCountDarry[int.Parse(item.號碼5)] = model.selectNumberCountDarry[int.Parse(item.號碼5)] + 1;
-            }
-            for (int i = 1; i < 40; i++)
-            {
-                numDic.Add(i, model.selectNumberCountDarry[i]);
-            }
-            model.selectNumberCountListOrderBy = numDic.OrderByDescending(d => d.Value).ToDictionary(dkey => dkey.Key, dvalue => dvalue.Value);
+            SumNumberCount(model, numList);
             ViewBag.Message = "查詢期間為：" + numList.Select(d => d.開獎日期).Min() + "~" + numList.Select(d => d.開獎日期).Max();
             ViewBag.Data = numList.Count;
 
             return View(model);
         }
 
+        #endregion
+
+        #region 熱門牌
+        [HttpGet]
+        public ActionResult HotNumber()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult HotNumber(string PeriodNum)
+        {
+            SelectLotNumber model = new SelectLotNumber();
+            List<LotNumber> numList = new List<LotNumber>();
+            numList = _homeService.GetNumberTopServices(PeriodNum);
+            SumNumberCount(model, numList);
+            ViewBag.Message = "查詢期間為：" + numList.Select(d => d.開獎日期).Min() + "~" + numList.Select(d => d.開獎日期).Max();
+            ViewBag.Data = numList.Count;
+            return View(model);
+        }
+       
         #endregion
 
         #region 查詢號碼
@@ -229,6 +235,35 @@ namespace WebApplication1.Controllers
             {
                 TempData["message"] = "無重覆值";
             }
+        }
+        #endregion
+
+        #region 通用
+        /// <summary>
+        /// 計算查詢結果的各號碼總計
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="numList"></param>
+        /// <returns></returns>
+        private SelectLotNumber SumNumberCount(SelectLotNumber model, List<LotNumber> numList)
+        {
+            Dictionary<int?, int?> numDic = new Dictionary<int?, int?>();
+            model.selectNumberCountDarry = new int[40];
+            foreach (var item in numList)
+            {
+                model.selectNumberCountDarry[int.Parse(item.號碼1)] = model.selectNumberCountDarry[int.Parse(item.號碼1)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼2)] = model.selectNumberCountDarry[int.Parse(item.號碼2)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼3)] = model.selectNumberCountDarry[int.Parse(item.號碼3)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼4)] = model.selectNumberCountDarry[int.Parse(item.號碼4)] + 1;
+                model.selectNumberCountDarry[int.Parse(item.號碼5)] = model.selectNumberCountDarry[int.Parse(item.號碼5)] + 1;
+            }
+            for (int i = 1; i < 40; i++)
+            {
+                numDic.Add(i, model.selectNumberCountDarry[i]);
+            }
+            model.selectNumberCountList = numDic;
+            model.selectNumberCountListOrderBy = numDic.OrderByDescending(d => d.Value).ToDictionary(dkey => dkey.Key, dvalue => dvalue.Value);
+            return model;
         }
         #endregion
 

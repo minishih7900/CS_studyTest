@@ -50,11 +50,12 @@ namespace ExcelTools
             t.Rows[0].Cells[6].Paragraphs.First().Append("4");
             t.Rows[0].Cells[7].Paragraphs.First().Append("5");
             var monthData = "";
-            DateTime NewDate = DateTime.ParseExact("20190101", "yyyyMMdd", null, DateTimeStyles.AllowWhiteSpaces);
-            var lbDay = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(NewDate.DayOfWeek);
+
             foreach (var item in data)
             {
                 var i = data.IndexOf(item)+1;
+                DateTime NewDate = DateTime.ParseExact(item.開獎日期, "yyyyMMdd", null, DateTimeStyles.AllowWhiteSpaces);
+                var lbDay = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(NewDate.DayOfWeek);
                 if (monthData != item.開獎日期.Substring(4,2))
                 {
                     monthData = item.開獎日期.Substring(4, 2);

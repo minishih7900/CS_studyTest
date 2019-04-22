@@ -28,6 +28,7 @@ namespace Study.Models.Models
     public class SelectLotNumber
     {
         public int[] selectNumberCountDarry { get; set; }
+        public Dictionary<int?, int?> selectNumberCountList { get; set; }
         public Dictionary<int?,int?> selectNumberCountListOrderBy { get; set; }
 
     }

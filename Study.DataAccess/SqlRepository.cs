@@ -24,7 +24,7 @@ namespace Study.DataAccess
         {
             var sqlTemp = "";
             var sql = @"
-select * from [dbo].[開獎記錄表]
+select * from [dbo].[TwLot59]
 where (號碼1=@num or 號碼2=@num or  號碼3=@num or 號碼4=@num or 號碼4=@num) {0}
 ";
             if (!string.IsNullOrEmpty(StartDate) && !string.IsNullOrEmpty(EndDate))
@@ -51,7 +51,7 @@ where (號碼1=@num or 號碼2=@num or  號碼3=@num or 號碼4=@num or 號碼4=
         {
             var sql = @"
 SELECT           *
-FROM              開獎記錄表
+FROM              TwLot59
 WHERE          (開獎日期 BETWEEN @StartDate AND @EndDate)
 ";
             return _dbDapper.QueryList<LotNumber>(sql,new { StartDate=startDate,EndDate=endDate});
@@ -60,14 +60,14 @@ WHERE          (開獎日期 BETWEEN @StartDate AND @EndDate)
         {
             var sql = @"
 SELECT   Top " + newCount  + @"*
-FROM              開獎記錄表
+FROM              TwLot59
 order by 期數 desc";
             return _dbDapper.QueryList<LotNumber>(sql, null);
         }
         public bool InputLotNumber(LotNumber data)
         {
             var sql = @"
-INSERT INTO [dbo].[開獎記錄表]
+INSERT INTO [dbo].[TwLot59]
            ([期數]
            ,[開獎日期]
            ,[號碼1]
@@ -89,13 +89,77 @@ INSERT INTO [dbo].[開獎記錄表]
 
         public string GetMaxNo()
         {
-            var sql = @"select max(期數) from [dbo].[開獎記錄表]";
+            var sql = @"select max(期數) from [dbo].[TwLot59]";
             return _dbDapper.ExecuteScalarSQL<string>(sql,null);
         }
-        public 累計記錄表 GetCountNumber()
+        public bool InsertCopyNumber(string data)
         {
-            var sql = @"select top(1) * from [dbo].[累計記錄表] order by 日期 desc";
-            return _dbDapper.ExecuteScalarSQL<累計記錄表>(sql, null);
+            var sql = @"
+            insert into [dbo].[TwLot59_StoredCount]
+SELECT TOP (1) @data
+      ,[1]+1 as [1]
+      ,[2]+1 as [2]
+      ,[3]+1 as [3]
+      ,[4]+1 as [4]
+      ,[5]+1 as [5]
+      ,[6]+1 as [6]
+      ,[7]+1 as [7]
+      ,[8]+1 as [8]
+      ,[9]+1 as [9]
+      ,[10]+1 as [10]
+      ,[11]+1 as [11]
+      ,[12]+1 as [12]
+      ,[13]+1 as [13]
+      ,[14]+1 as [14]
+      ,[15]+1 as [15]
+      ,[16]+1 as [16]
+      ,[17]+1 as [17]
+      ,[18]+1 as [18]
+      ,[19]+1 as [19]
+      ,[20]+1 as [20]
+      ,[21]+1 as [21]
+      ,[22]+1 as [22]
+      ,[23]+1 as [23]
+      ,[24]+1 as [24]
+      ,[25]+1 as [25]
+      ,[26]+1 as [26]
+      ,[27]+1 as [27]
+      ,[28]+1 as [28]
+      ,[29]+1 as [29]
+      ,[30]+1 as [30]
+      ,[31]+1 as [31]
+      ,[32]+1 as [32]
+      ,[33]+1 as [33]
+      ,[34]+1 as [34]
+      ,[35]+1 as [35]
+      ,[36]+1 as [36]
+      ,[37]+1 as [37]
+      ,[38]+1 as [38]
+      ,[39]+1 as [39]
+       FROM [MyDB].[dbo].[TwLot59_StoredCount] order by 日期 desc";
+            var param = new Dictionary<string, object>();
+            param.Add("data", data);
+            
+            return _dbDapper.NonQuerySQL(sql, param) > 0;
+        }
+
+        public bool UpdateCopyNumber(LotNumber data)
+        {
+            var sql = @"
+            DECLARE @TSQL NVARCHAR(4000)
+SET @TSQL =	'update [dbo].[TwLot59_StoredCount]
+set ' + @num1 + '=0,' + @num2 + '=0,' + @num3 +'=0,' + @num4 + '=0,' + @num5 + '=0
+where 日期=' + @date
+EXEC SP_EXECUTESQL @TSQL";
+            var param = new Dictionary<string, object>();
+            param.Add("num1", "[" + data.號碼1 + "]");
+            param.Add("num2", "[" + data.號碼2 + "]");
+            param.Add("num3", "[" + data.號碼3 + "]");
+            param.Add("num4", "[" + data.號碼4 + "]");
+            param.Add("num5", "[" + data.號碼5 + "]");
+            param.Add("date", data.開獎日期);
+
+            return _dbDapper.NonQuerySQL(sql, param) > 0;
         }
     }
 }
